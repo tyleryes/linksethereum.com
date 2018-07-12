@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Links and Magnet Explorer for Ethereum</title>
+	<meta name="description" content="Simple and uncensorable magnet & links explorer for Ethereum">
+	<meta name="author" content="SitePoint">
+	<link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+	<style>
+		.dataTables_wrapper .dataTables_filter {
+			float: left;
+			text-align: left;
+			margin-left: 3%;
+		}
+		.presentation{
+			margin-left: calc( 50vw - 250px );width: 500px;
+		}
+		@media screen and (max-width: 768px) {
+			.presentation{
+				margin-left: 0;width: 100vw;
+			}
+		}
+	</style>
+</head>
+
+<body>
+	<script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
+	<script src="https://cdn.rawgit.com/ConsenSys/abi-decoder/master/dist/abi-decoder.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+	
+	<script type="text/javascript">
+		$(document).ready( function () {
+			t = $('#myTable').DataTable( {
+				 "order": [[ 3, "desc" ]],
+				 columns: [
+					{ title: "Description","width": "35%" },
+					{ title: "URL","width": "20%" },
+					{ title: "Transaction Hash" },
+					{ title: "Block" },
+					{ title: "File Type" }
+				],
+			} );
+			
+			if(getCookie("rememberapi")!="") $('#account').val( getCookie("rememberapi"));
+		} );
+		var web3 = new Web3();
+		
+		function getTransactionsByAccount(myaccount, startBlockNumber, endBlockNumber) {
+			if (endBlockNumber == null) {
+				endBlockNumber = web3.eth.blockNumber;
+				console.log("Using endBlockNumber: " + endBlockNumber);
+			}
+			if (startBlockNumber == null) {
+				startBlockNumber = endBlockNumber - 1000;
+				console.log("Using startBlockNumber: " + startBlockNumber);
+			}
+			console.log("Searching for transactions to/from account \"" + myaccount + "\" within blocks "  + startBlockNumber + " and " + endBlockNumber);
+
+			for (var i = startBlockNumber; i <= endBlockNumber; i++) {
+				var block = web3.eth.getBlock(i, true);
+				if (block != null && block.transactions != null) {
+				  block.transactions.forEach( function(e) {
+					myaccount=myaccount.toUpperCase();
+					if(e.from!=null && e.to!=null) if (myaccount == "*" || myaccount == e.from.toUpperCase() || myaccount == e.to.toUpperCase()) {
+						settable(e,t);
+					}
+				  })
+				}
+			}
+		}
+		
+		function settable(val,t){
+			web3.eth.getTransaction(val.hash, (error, txResult) => {
+				if(txResult.input!="" && txResult.input!=null){
+					result=(abiDecoder.decodeMethod(txResult.input));
+					var inputdata=($.parseJSON(result.params[0].value));
+					
+					if(inputdata.url!=null && inputdata.url!=""  && inputdata.description!="" && inputdata.description!=undefined && inputdata.type=="L"){
+						rowdata=[inputdata.description,"<a href='"+inputdata.url+"'>"+inputdata.url+"</a>","<a href='https://etherscan.io/tx/"+val.hash+"'>"+val.hash+"</a>",val.blockNumber,inputdata.filetype];
+						t.row.add( rowdata ).draw( false );
+					}
+					if(document.getElementById("loading").innerHTML!="") document.getElementById("loading").innerHTML="";
+				}
+			});
+			
+		}
+		
+		function getfiles(evt){
+			document.getElementById("loading").innerHTML="Loading...";
+			evt.preventDefault();
+			var account = document.getElementById("account").value;
+			setCookie("rememberapi", account);
+			var contract = document.getElementById("contract").value;
+			var abit = document.getElementById("abit").value;
+			var etherscan = document.getElementById("etherscan").value;
+			var tob = document.getElementById("tob").value;
+			var fromb = document.getElementById("fromb").value;
+			
+			if(currentValue=="account"){
+				account="https://mainnet.infura.io/"+account;
+			}else{
+				account = document.getElementById("localhost").value;
+			}
+			if(account!="" && contract!=""){
+				web3.setProvider(new web3.providers.HttpProvider(account));
+				
+				if(fromb=="") fromb = 0;
+				if(tob=="last" || tob=="") tob = web3.eth.blockNumber;
+
+				const cABI = abit;
+				abiDecoder.addABI($.parseJSON(cABI));
+				
+				if(transactionsfrommethod=="etherscan"){
+					$.getJSON( "https://api.etherscan.io/api?module=account&action=txlist&address="+contract+"&startblock="+fromb+"&endblock="+tob+"&sort=asc&apikey="+etherscan
+						, function( data ) {
+							  inputdata = [];
+							  var ii=0;
+							  
+							  $.each( data.result, function( key, val ) {
+								settable(val,t);
+								
+							  });
+							  
+					});
+				}else{
+					getTransactionsByAccount(contract,fromb,tob);
+				}
+			}
+			
+			return false;
+		}
+	</script>
+	<div class="presentation" >
+		<h2>Links and Magnet Explorer for Ethereum</h2>
+		<form method="POST" action="" onsubmit="return getfiles(event);">
+			Select a node:<br>
+			<input checked="checked" type="radio" name="node" onclick="handleClick(this);" value="account" />
+			You can enter your infura api key: <i>you can get one free <a href="https://infura.io/">infura api key</i></a>
+			<br><input id="account" value="MEDIUMTUTORIAL" type="text" size="30" name="account">  
+			<br>
+			<input type="radio" name="node" onclick="handleClick(this);" value="localhost" />
+			Or you can enter your Ethereum localhost node or a public node: <!--//like https://api.myetherapi.com/eth but his use it is limited-->
+			<br><input id="localhost" style="display:none" type="text" size="30" name="localhost">  
+			
+			<br><br>		
+			Enter a contract address to explore for magnet files:<br><input type="text" id="contract" value="0xf3763C30DD6986b53402d41a8552b8F7f6A6089b" size="45" name="contract">
+			<br>Enter his ABI:<br><textarea rows="4" cols="45" name="abit" id="abit" >[{"constant":true,"inputs":[{"name":"code","type":"string"}],"name":"getChainyData","outputs":[{"name":"","type":"string"}],"type":"function"},{"constant":false,"inputs":[{"name":"_address","type":"address"},{"name":"_value","type":"bool"}],"name":"setServiceAccount","outputs":[],"type":"function"},{"constant":true,"inputs":[],"name":"getChainyURL","outputs":[{"name":"","type":"string"}],"type":"function"},{"constant":false,"inputs":[{"name":"_key","type":"string"},{"name":"_value","type":"uint256"}],"name":"setConfig","outputs":[],"type":"function"},{"constant":false,"inputs":[],"name":"releaseFunds","outputs":[],"type":"function"},{"constant":false,"inputs":[{"name":"_address","type":"address"}],"name":"setReceiverAddress","outputs":[],"type":"function"},{"constant":true,"inputs":[],"name":"owner","outputs":[{"name":"","type":"address"}],"type":"function"},{"constant":true,"inputs":[{"name":"code","type":"string"}],"name":"getChainySender","outputs":[{"name":"","type":"address"}],"type":"function"},{"constant":false,"inputs":[{"name":"json","type":"string"}],"name":"addChainyData","outputs":[],"type":"function"},{"constant":true,"inputs":[{"name":"_key","type":"string"}],"name":"getConfig","outputs":[{"name":"_value","type":"uint256"}],"type":"function"},{"constant":true,"inputs":[{"name":"code","type":"string"}],"name":"getChainyTimestamp","outputs":[{"name":"","type":"uint256"}],"type":"function"},{"constant":false,"inputs":[{"name":"_url","type":"string"}],"name":"setChainyURL","outputs":[],"type":"function"},{"constant":false,"inputs":[{"name":"newOwner","type":"address"}],"name":"transferOwnership","outputs":[],"type":"function"},{"inputs":[],"type":"constructor"},{"anonymous":false,"inputs":[{"indexed":false,"name":"timestamp","type":"uint256"},{"indexed":false,"name":"code","type":"string"}],"name":"chainyShortLink","type":"event"}]</textarea>
+			<br><br><br>		
+			<input checked="checked" type="radio" name="ethers" onclick="handleClicketh(this);" value="etherscan" />
+			To get transactions from etherscan cache; you can enter your api key: <i>you can get one free, <a href="https://etherscan.io/apis">etherscan api key</i></a>
+			<br><input type="text" value="YourApiKeyToken" id="etherscan" size="45" name="etherscan">
+			<br>
+			<input type="radio" name="ethers" onclick="handleClicketh(this);" value="manual" />
+			Else you can search manually on the blockchain, with your node, but this is very slow. 
+			<br>Search From Block: <input type="text" id="fromb" size="10" name="fromb"> To Block: <input type="text" id="tob" size="10" name="tob"> 
+			<br><br>
+			<input type="submit" value="Search">
+		</form>
+			<br>
+			<h3 id="loading">
+			</h3>
+	</div>
+	<table id="myTable" class="display compact" style="width:100%">
+			<thead>
+				<tr>
+					<th>Description</th>
+					<th>URL</th>
+					<th>Transaction Hash</th>
+					<th>Block</th>
+					<th>File Type</th>
+				</tr>
+			</thead>
+			
+		</table>
+	<br><br>
+	<div class="presentation" >
+		How to upload data:<br>
+		This is an example of the JSON format that we are reading on inputs:<br>
+		<input type="text" name="txt" value="Your name file" onkeyup="settext(this.value)">&nbsp;&nbsp;<input type="text" name="txt2" value="magnet:?xt=urn..." onkeyup="settext2(this.value)">
+		<br><i>
+		{	<br>
+			"id":"CHAINY",<br>
+			"version":1,<br>
+			<b>"type":"L"</b>,<br>
+			"description":"<div style="display: contents;"  id='namefile'></div>",<br>
+			<b>"url"</b>:"<div style="display: contents;" id='namefile2'></div>",<br>
+			"filetype":"magnet"<br>
+		}<br></i><br>
+		To publish it on ethereum blockchain with <i>addChainyData function</i> you can follow <a href="https://chainy.info/howto">this steps</a>
+		<br><br>
+		You can donate to pay the ethereum fees and thus we will be able to save more links and improve the software: 
+		<br>ETH: 0x904acEB95f681665768f1464f36903068730Fd42
+	</div>
+	<script type="text/javascript">
+		var currentValue = "account";
+		var transactionsfrommethod = "etherscan";
+		function settext(mytext) {
+			document.getElementById("namefile").innerHTML=mytext;
+		}function settext2(mytext) {
+			document.getElementById("namefile2").innerHTML=mytext;
+		}
+		function handleClick(myRadio) {
+			document.getElementById(currentValue).style.display="none";
+			document.getElementById(myRadio.value).style.display="block";
+			currentValue = myRadio.value;
+		}
+		function handleClicketh(myRadio) {
+			transactionsfrommethod = myRadio.value;
+		}
+		function setCookie(cname, cvalue, exdays) {
+			var d = new Date();
+			d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+			var expires = "expires="+d.toUTCString();
+			document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+		}
+		function getCookie(cname) {
+			var name = cname + "=";
+			var ca = document.cookie.split(';');
+			for(var i = 0; i < ca.length; i++) {
+				var c = ca[i];
+				while (c.charAt(0) == ' ') {
+					c = c.substring(1);
+				}
+				if (c.indexOf(name) == 0) {
+					return c.substring(name.length, c.length);
+				}
+			}
+			return "";
+		}
+	</script>
+</body>
+</html>
