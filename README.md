@@ -31,7 +31,8 @@ This is an example of the JSON format that we are reading on inputs:
 "filetype":"magnet"
 }
 
-To publish it on ethereum blockchain with addChainyData function you can follow this steps 
+To publish it on ethereum blockchain with addChainyData function you can follow this steps. https://chainy.info/howto
+Remember that ethereum is traceable, you must not upload ilegal links to the blockchain.
 
 You can donate to pay the ethereum fees and thus we will be able to save more links and improve the software: 
 
