@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Links and Magnet Explorer for Ethereum</title>
+	<meta name="description" content="Simple and uncensorable magnet and links explorer for Ethereum">
+	<meta name="author" content="SitePoint">
+
+</head>
+
+<body>
+	<script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
+	<script src="https://cdn.rawgit.com/ConsenSys/abi-decoder/master/dist/abi-decoder.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="https://cdn.rawgit.com/tyleryes/linksethereum.com/454822ee/searcheth.js"></script>
+
+	
+	<div class="presentation" >
+		<h2>Links and Magnet Explorer for Ethereum</h2>
+		<form method="POST" action="" onsubmit="return getfiles(event);">
+			Select a node:<br>
+			<input checked="checked" type="radio" name="node" onclick="handleClick(this);" value="account" />
+			You can enter your infura api key: <i>you can get one free <a href="https://infura.io/">infura api key</i></a>
+			<br><input id="account" value="MEDIUMTUTORIAL" type="text" size="30" name="account">  
+			<br>
+			<input type="radio" name="node" onclick="handleClick(this);" value="localhost" />
+			Or you can enter your Ethereum localhost node or a public node: <!--//like https://api.myetherapi.com/eth but his use it is limited-->
+			<br><input id="localhost" style="display:none" type="text" size="30" name="localhost">  
+			
+			<br><br>		
+			Enter a contract address to explore for magnet files:<br><input type="text" id="contract" value="0xf3763C30DD6986b53402d41a8552b8F7f6A6089b" size="45" name="contract">
+			<br>Enter his ABI:<br><textarea rows="4" cols="45" name="abit" id="abit" >[{"constant":true,"inputs":[{"name":"code","type":"string"}],"name":"getChainyData","outputs":[{"name":"","type":"string"}],"type":"function"},{"constant":false,"inputs":[{"name":"_address","type":"address"},{"name":"_value","type":"bool"}],"name":"setServiceAccount","outputs":[],"type":"function"},{"constant":true,"inputs":[],"name":"getChainyURL","outputs":[{"name":"","type":"string"}],"type":"function"},{"constant":false,"inputs":[{"name":"_key","type":"string"},{"name":"_value","type":"uint256"}],"name":"setConfig","outputs":[],"type":"function"},{"constant":false,"inputs":[],"name":"releaseFunds","outputs":[],"type":"function"},{"constant":false,"inputs":[{"name":"_address","type":"address"}],"name":"setReceiverAddress","outputs":[],"type":"function"},{"constant":true,"inputs":[],"name":"owner","outputs":[{"name":"","type":"address"}],"type":"function"},{"constant":true,"inputs":[{"name":"code","type":"string"}],"name":"getChainySender","outputs":[{"name":"","type":"address"}],"type":"function"},{"constant":false,"inputs":[{"name":"json","type":"string"}],"name":"addChainyData","outputs":[],"type":"function"},{"constant":true,"inputs":[{"name":"_key","type":"string"}],"name":"getConfig","outputs":[{"name":"_value","type":"uint256"}],"type":"function"},{"constant":true,"inputs":[{"name":"code","type":"string"}],"name":"getChainyTimestamp","outputs":[{"name":"","type":"uint256"}],"type":"function"},{"constant":false,"inputs":[{"name":"_url","type":"string"}],"name":"setChainyURL","outputs":[],"type":"function"},{"constant":false,"inputs":[{"name":"newOwner","type":"address"}],"name":"transferOwnership","outputs":[],"type":"function"},{"inputs":[],"type":"constructor"},{"anonymous":false,"inputs":[{"indexed":false,"name":"timestamp","type":"uint256"},{"indexed":false,"name":"code","type":"string"}],"name":"chainyShortLink","type":"event"}]</textarea>
+			<br><br><br>		
+			<input checked="checked" type="radio" name="ethers" onclick="handleClicketh(this);" value="etherscan" />
+			To get transactions from etherscan cache; you can enter your api key: <i>you can get one free, <a href="https://etherscan.io/apis">etherscan api key</i></a>
+			<br><input type="text" value="YourApiKeyToken" id="etherscan" size="45" name="etherscan">
+			<br>
+			<input type="radio" name="ethers" onclick="handleClicketh(this);" value="manual" />
+			Else you can search manually on the blockchain, with your node, but this is very slow. 
+			<br>Search From Block: <input type="text" id="fromb" size="10" name="fromb"> To Block: <input type="text" id="tob" size="10" name="tob"> 
+			<br>
+			<br>
+			http links <input type="checkbox" id="httplink" checked> magnet links <input type="checkbox" id="magnetlink" checked> ipfs links <input type="checkbox" id="ipfslink"  checked>
+			<br><br>
+			<input type="submit" value="Search">
+		</form>
+			<br>
+			<h3 id="loading">
+			</h3>
+			<div id="result">
+			</div>
+	</div>
+	
+	<br><br>
+	<div class="presentation" >
+		How to upload data:<br>
+		This is an example of the JSON format that we are reading on inputs:<br>
+		<input type="text" name="txt" value="Your name file" onkeyup="settext(this.value)">&nbsp;&nbsp;<input type="text" name="txt2" value="magnet:?xt=urn..." onkeyup="settext2(this.value)">
+		<br><i>
+		{	<br>
+			"id":"CHAINY",<br>
+			"version":1,<br>
+			<b>"type":"L"</b>,<br>
+			"description":"<div style="display: contents;"  id='namefile'></div>",<br>
+			<b>"url"</b>:"<div style="display: contents;" id='namefile2'></div>",<br>
+			"filetype":"magnet"<br>
+		}<br></i><br>
+		To publish it on ethereum blockchain with <i>addChainyData function</i> you can follow <a href="https://chainy.info/howto">this steps</a>. Remember that ethereum is traceable, you must not upload ilegal links to the blockchain.
+		
+	</div>
+	
+	<script type="text/javascript">
+		var currentValue = "account";
+		var transactionsfrommethod = "etherscan";
+		function settext(mytext) {
+			document.getElementById("namefile").innerHTML=mytext;
+		}function settext2(mytext) {
+			document.getElementById("namefile2").innerHTML=mytext;
+		}function handleClick(myRadio) {
+			document.getElementById(currentValue).style.display="none";
+			document.getElementById(myRadio.value).style.display="block";
+			currentValue = myRadio.value;
+		}
+		function handleClicketh(myRadio) {
+			transactionsfrommethod = myRadio.value;
+		}
+		
+	</script>
+</body>
+</html>
