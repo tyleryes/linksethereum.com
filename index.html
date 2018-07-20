@@ -81,7 +81,7 @@
 					var httpid = document.getElementById("httplink");
 					var magnetid = document.getElementById("magnetlink");
 					var ipfsid = document.getElementById("ipfslink");
-					if(inputdata.url!=null && inputdata.url!="" && inputdata.description!="" && inputdata.description!=undefined && inputdata.type=="L" && ( 
+					if(inputdata.url!=null && inputdata.url!="" && inputdata.url.indexOf(".onion") == -1 && inputdata.description!="" && inputdata.description!=undefined && inputdata.type=="L" && ( 
 						( inputdata.url.startsWith("http") && httpid.checked == true) || ( inputdata.url.startsWith("http://127.0.0.1:8080/ipfs/") && ipfsid.checked == true) || ( inputdata.url.startsWith("magnet") && magnetid.checked == true) ) ){
 						rowdata=[inputdata.description,"<a href='"+inputdata.url+"'>"+inputdata.url+"</a>","<a href='https://etherscan.io/tx/"+val.hash+"'>"+val.hash+"</a>",val.blockNumber,inputdata.filetype];
 						t.row.add( rowdata ).draw( false );
@@ -189,6 +189,7 @@
 		This is an example of the JSON format that we are reading on inputs:<br>
 		<input type="text" name="txt" value="Your name file" onkeyup="settext(this.value)">&nbsp;&nbsp;<input type="text" name="txt2" value="magnet:?xt=urn..." onkeyup="settext2(this.value)">
 		<br><i>
+		<div id="jsonid">
 		{	<br>
 			"id":"CHAINY",<br>
 			"version":1,<br>
@@ -196,13 +197,17 @@
 			"description":"<div style="display: contents;"  id='namefile'>Your name file</div>",<br>
 			<b>"url"</b>:"<div style="display: contents;" id='namefile2'>magnet:?xt=urn...</div>",<br>
 			"filetype":"magnet"<br>
-		}<br></i><br>
+		}
+		</div><br></i><br>
+		Eth GasLimit estimator:<br>
+		<input size="5" type="text" name="gastx"  id="gastx" value="21000" onkeyup="settext3()">&nbsp; + &nbsp;<input size="5" type="text" name="txz" id="txz" value="64" onkeyup="settext3()"> * bytelength = <div style="display: contents;"  id="calculatorlol"></div>
+		<br><br>
 		To publish it on ethereum blockchain with <i>addChainyData function</i> you can follow <a href="https://chainy.info/howto">this steps</a>. Remember that ethereum is traceable, you must not upload ilegal links to the blockchain.
 		<br><br>
 		You can donate to pay the ethereum fees and thus we will be able to save more links and improve the software: 
 		<br>ETH: 0x904acEB95f681665768f1464f36903068730Fd42
 		<br><br>
-		<a href="https://itty.bitty.site/#/data:text/html;charset=utf-8;bxze64,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">
+		<a href="https://itty.bitty.site/#/data:text/html;charset=utf-8;bxze64,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">
 		itty.bitty link version of this website
 		</a>
 		<br>
@@ -216,9 +221,30 @@
 		var transactionsfrommethod = "etherscan";
 		function settext(mytext) {
 			document.getElementById("namefile").innerHTML=mytext;
+			settext3()
 		}function settext2(mytext) {
 			document.getElementById("namefile2").innerHTML=mytext;
+			settext3()
 		}
+		
+		function settext3() {
+			var gastx=parseInt(document.getElementById("gastx").value);
+			var gastxz=parseInt(document.getElementById("txz").value);
+			var bytelong = byteLength(document.getElementById("jsonid").innerHTML);
+			document.getElementById("calculatorlol").innerHTML=gastx+gastxz*bytelong;
+		}
+		function byteLength(str) {
+		  // returns the byte length of an utf8 string
+		  var s = str.length;
+		  for (var i=str.length-1; i>=0; i--) {
+			var code = str.charCodeAt(i);
+			if (code > 0x7f && code <= 0x7ff) s++;
+			else if (code > 0x7ff && code <= 0xffff) s+=2;
+			if (code >= 0xDC00 && code <= 0xDFFF) i--; //trail surrogate
+		  }
+		  return s;
+		}
+		
 		function handleClick(myRadio) {
 			document.getElementById(currentValue).style.display="none";
 			document.getElementById(myRadio.value).style.display="block";

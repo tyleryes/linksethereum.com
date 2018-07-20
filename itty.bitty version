@@ -12,7 +12,7 @@
 	<script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
 	<script src="https://cdn.rawgit.com/ConsenSys/abi-decoder/master/dist/abi-decoder.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-	<script src="https://cdn.rawgit.com/tyleryes/linksethereum.com/master/assets/searcheth.js"></script>
+	<script src="https://cdn.rawgit.com/tyleryes/linksethereum.com/4784e579/assets/searcheth.js"></script>
 
 	
 	<div class="presentation" >
@@ -37,7 +37,10 @@
 			<br>
 			<input type="radio" name="ethers" onclick="handleClicketh(this);" value="manual" />
 			Else you can search manually on the blockchain, with your node, but this is very slow. 
-			<br>Search From Block: <input type="text" id="fromb" size="10" name="fromb"> To Block: <input type="text" id="tob" size="10" name="tob"> 
+			<br>Search From Block: <input type="text" id="fromb" size="10" value="3072900"  name="fromb"> To Block: <input type="text" id="tob" size="10" name="tob"> 
+			<br>
+			<br>
+			http links <input type="checkbox" id="httplink" checked> magnet links <input type="checkbox" id="magnetlink" checked> ipfs links <input type="checkbox" id="ipfslink"  checked>
 			<br><br>
 			<input type="submit" value="Search">
 		</form>
@@ -62,7 +65,9 @@
 			<b>"url"</b>:"<div style="display: contents;" id='namefile2'></div>",<br>
 			"filetype":"magnet"<br>
 		}<br></i><br>
-		To publish it on ethereum blockchain with <i>addChainyData function</i> you can follow <a href="https://chainy.info/howto">this steps</a>
+		<br>
+		
+		To publish it on ethereum blockchain with <i>addChainyData function</i> you can follow <a href="https://chainy.info/howto">this steps</a>. Remember that ethereum is traceable, you must not upload ilegal links to the blockchain.
 		
 	</div>
 	
