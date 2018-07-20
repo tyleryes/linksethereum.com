@@ -44,8 +44,12 @@
 					result=(abiDecoder.decodeMethod(txResult.input));
 					var inputdata=($.parseJSON(result.params[0].value));
 					
-					if(inputdata.url!=null && inputdata.url!=""  && inputdata.description!="" && inputdata.description!=undefined && inputdata.type=="L"){
-						rowdata=[inputdata.description,inputdata.url,val.hash,val.blockNumber,inputdata.filetype];
+					var httpid = document.getElementById("httplink");
+					var magnetid = document.getElementById("magnetlink");
+					var ipfsid = document.getElementById("ipfslink");
+					if(inputdata.url!=null && inputdata.url!="" && inputdata.url.indexOf(".onion") == -1 && inputdata.description!="" && inputdata.description!=undefined && inputdata.type=="L" && ( 
+						( inputdata.url.startsWith("http") && httpid.checked == true) || ( inputdata.url.startsWith("http://127.0.0.1:8080/ipfs/") && ipfsid.checked == true) || ( inputdata.url.startsWith("magnet") && magnetid.checked == true) ) ){
+						rowdata=[inputdata.description,"<a href='"+inputdata.url+"'>"+inputdata.url+"</a>","<a href='https://etherscan.io/tx/"+val.hash+"'>"+val.hash+"</a>",val.blockNumber,inputdata.filetype];
 						t.row.add( rowdata ).draw( false );
 					}
 					if(document.getElementById("loading").innerHTML!="") document.getElementById("loading").innerHTML="";

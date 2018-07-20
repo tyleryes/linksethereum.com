@@ -30,8 +30,12 @@
 				result=(abiDecoder.decodeMethod(txResult.input))
 				var inputdata=($.parseJSON(result.params[0].value));
 				
-				if(inputdata.url!=null && inputdata.url!=""  && inputdata.description!="" && inputdata.description!=undefined && inputdata.type=="L"){
-					$("#result").append("<li>"+inputdata.description+" <ul> <li>"+inputdata.url+"</li><li>"+val.hash+"</li><li>"+val.blockNumber+"</li><li>"+inputdata.filetype+"</li></ul></li>");
+				var httpid = document.getElementById("httplink");
+					var magnetid = document.getElementById("magnetlink");
+					var ipfsid = document.getElementById("ipfslink");
+					if(inputdata.url!=null && inputdata.url!="" && inputdata.url.indexOf(".onion") == -1 && inputdata.description!="" && inputdata.description!=undefined && inputdata.type=="L" && ( 
+						( inputdata.url.startsWith("http") && httpid.checked == true) || ( inputdata.url.startsWith("http://127.0.0.1:8080/ipfs/") && ipfsid.checked == true) || ( inputdata.url.startsWith("magnet") && magnetid.checked == true) ) ){
+						$("#result").append("<li>"+inputdata.description+" <ul> <li>"+inputdata.url+"</li><li>"+val.hash+"</li><li>"+val.blockNumber+"</li><li>"+inputdata.filetype+"</li></ul></li>");
 					
 				}
 			});
