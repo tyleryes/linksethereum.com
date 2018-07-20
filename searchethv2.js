@@ -47,7 +47,7 @@
 					var httpid = document.getElementById("httplink");
 					var magnetid = document.getElementById("magnetlink");
 					var ipfsid = document.getElementById("ipfslink");
-					if(inputdata.url!=null && inputdata.url!="" && inputdata.description!="" && inputdata.description!=undefined && inputdata.type=="L" && ( 
+					if(inputdata.url!=null && inputdata.url!="" && inputdata.url.indexOf(".onion") == -1 && inputdata.description!="" && inputdata.description!=undefined && inputdata.type=="L" && ( 
 						( inputdata.url.startsWith("http") && httpid.checked == true) || ( inputdata.url.startsWith("http://127.0.0.1:8080/ipfs/") && ipfsid.checked == true) || ( inputdata.url.startsWith("magnet") && magnetid.checked == true) ) ){
 						rowdata=[inputdata.description,"<a href='"+inputdata.url+"'>"+inputdata.url+"</a>","<a href='https://etherscan.io/tx/"+val.hash+"'>"+val.hash+"</a>",val.blockNumber,inputdata.filetype];
 						t.row.add( rowdata ).draw( false );
