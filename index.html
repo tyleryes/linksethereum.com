@@ -9,23 +9,41 @@
 	<meta name="apple-mobile-web-app-capable" content="yes">
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
 	<style>
+		@import url('https://fonts.googleapis.com/css?family=Lato');
+		
+		body{
+			font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+			font-weight: 300 !important;
+		}
+		.long{width:100%}
+		h2{
+			font-weight: 300 !important;
+			border-bottom: 1px solid #bdbdbd;
+			text-align: center;
+			font-size: 25px;
+		}
+		p{
+		    border: 1px solid #bdbdbd;
+			border-radius: 5px;
+			padding: 15px;
+		}
 		.dataTables_wrapper .dataTables_filter {
 			float: left;
 			text-align: left;
 			margin-left: 3%;
 		}
 		.presentation{
-			margin-left: calc( 50vw - 250px );width: 500px;
+			margin-left: calc( 50vw - 250px );width: 533px;
 		}
 		@media screen and (max-width: 768px) {
 			.presentation{
-				margin-left: 0;width: 100vw;
+				margin-left: 0;width: 97vw;
 			}
 		}
 	</style>
 </head>
 
-<body>
+<body >
 	<script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
 	<script src="https://cdn.rawgit.com/ConsenSys/abi-decoder/master/dist/abi-decoder.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
@@ -45,6 +63,8 @@
 			} );
 			
 			if(getCookie("rememberapi")!="") $('#account').val( getCookie("rememberapi"));
+			
+			getfiles(event);
 		} );
 		var web3 = new Web3();
 		
@@ -94,7 +114,8 @@
 		
 		function getfiles(evt){
 			document.getElementById("loading").innerHTML="Loading...";
-			evt.preventDefault();
+			if(evt!=null) evt.preventDefault();
+			t.clear().draw();
 			var account = document.getElementById("account").value;
 			setCookie("rememberapi", account);
 			var contract = document.getElementById("contract").value;
@@ -140,31 +161,32 @@
 	<div class="presentation" >
 		<h2>Links and Magnet Explorer for Ethereum</h2>
 		<form method="POST" action="" onsubmit="return getfiles(event);">
-			Select a node:<br>
+			<p>Select a node:<br>
 			<input checked="checked" type="radio" name="node" onclick="handleClick(this);" value="account" />
 			You can enter your infura api key: <i>you can get one free <a href="https://infura.io/">infura api key</i></a>
-			<br><input id="account" value="MEDIUMTUTORIAL" type="text" size="30" name="account">  
+			<br><input class="long"  id="account" value="MEDIUMTUTORIAL" type="text" size="30" name="account">  
 			<br>
 			<input type="radio" name="node" onclick="handleClick(this);" value="localhost" />
 			Or you can enter your Ethereum localhost node or a public node: <!--//like https://api.myetherapi.com/eth but his use it is limited-->
-			<br><input id="localhost" style="display:none" type="text" size="30" name="localhost">  
+			<br><input class="long"  id="localhost" style="display:none" type="text" size="30" name="localhost">  
 			
-			<br><br>		
-			Enter a contract address to explore for magnet files:<br><input type="text" id="contract" value="0xf3763C30DD6986b53402d41a8552b8F7f6A6089b" size="45" name="contract">
-			<br>Enter his ABI:<br><textarea rows="4" cols="45" name="abit" id="abit" >[{"constant":true,"inputs":[{"name":"code","type":"string"}],"name":"getChainyData","outputs":[{"name":"","type":"string"}],"type":"function"},{"constant":false,"inputs":[{"name":"_address","type":"address"},{"name":"_value","type":"bool"}],"name":"setServiceAccount","outputs":[],"type":"function"},{"constant":true,"inputs":[],"name":"getChainyURL","outputs":[{"name":"","type":"string"}],"type":"function"},{"constant":false,"inputs":[{"name":"_key","type":"string"},{"name":"_value","type":"uint256"}],"name":"setConfig","outputs":[],"type":"function"},{"constant":false,"inputs":[],"name":"releaseFunds","outputs":[],"type":"function"},{"constant":false,"inputs":[{"name":"_address","type":"address"}],"name":"setReceiverAddress","outputs":[],"type":"function"},{"constant":true,"inputs":[],"name":"owner","outputs":[{"name":"","type":"address"}],"type":"function"},{"constant":true,"inputs":[{"name":"code","type":"string"}],"name":"getChainySender","outputs":[{"name":"","type":"address"}],"type":"function"},{"constant":false,"inputs":[{"name":"json","type":"string"}],"name":"addChainyData","outputs":[],"type":"function"},{"constant":true,"inputs":[{"name":"_key","type":"string"}],"name":"getConfig","outputs":[{"name":"_value","type":"uint256"}],"type":"function"},{"constant":true,"inputs":[{"name":"code","type":"string"}],"name":"getChainyTimestamp","outputs":[{"name":"","type":"uint256"}],"type":"function"},{"constant":false,"inputs":[{"name":"_url","type":"string"}],"name":"setChainyURL","outputs":[],"type":"function"},{"constant":false,"inputs":[{"name":"newOwner","type":"address"}],"name":"transferOwnership","outputs":[],"type":"function"},{"inputs":[],"type":"constructor"},{"anonymous":false,"inputs":[{"indexed":false,"name":"timestamp","type":"uint256"},{"indexed":false,"name":"code","type":"string"}],"name":"chainyShortLink","type":"event"}]</textarea>
-			<br><br><br>		
+			</p>
+			<p>		
+			Enter a contract address to explore for magnet files:<br><input class="long"  type="text" id="contract" value="0xf3763C30DD6986b53402d41a8552b8F7f6A6089b" size="45" name="contract">
+			<br>Enter his ABI:<br><textarea class="long"  rows="4" cols="45" name="abit" id="abit" >[{"constant":true,"inputs":[{"name":"code","type":"string"}],"name":"getChainyData","outputs":[{"name":"","type":"string"}],"type":"function"},{"constant":false,"inputs":[{"name":"_address","type":"address"},{"name":"_value","type":"bool"}],"name":"setServiceAccount","outputs":[],"type":"function"},{"constant":true,"inputs":[],"name":"getChainyURL","outputs":[{"name":"","type":"string"}],"type":"function"},{"constant":false,"inputs":[{"name":"_key","type":"string"},{"name":"_value","type":"uint256"}],"name":"setConfig","outputs":[],"type":"function"},{"constant":false,"inputs":[],"name":"releaseFunds","outputs":[],"type":"function"},{"constant":false,"inputs":[{"name":"_address","type":"address"}],"name":"setReceiverAddress","outputs":[],"type":"function"},{"constant":true,"inputs":[],"name":"owner","outputs":[{"name":"","type":"address"}],"type":"function"},{"constant":true,"inputs":[{"name":"code","type":"string"}],"name":"getChainySender","outputs":[{"name":"","type":"address"}],"type":"function"},{"constant":false,"inputs":[{"name":"json","type":"string"}],"name":"addChainyData","outputs":[],"type":"function"},{"constant":true,"inputs":[{"name":"_key","type":"string"}],"name":"getConfig","outputs":[{"name":"_value","type":"uint256"}],"type":"function"},{"constant":true,"inputs":[{"name":"code","type":"string"}],"name":"getChainyTimestamp","outputs":[{"name":"","type":"uint256"}],"type":"function"},{"constant":false,"inputs":[{"name":"_url","type":"string"}],"name":"setChainyURL","outputs":[],"type":"function"},{"constant":false,"inputs":[{"name":"newOwner","type":"address"}],"name":"transferOwnership","outputs":[],"type":"function"},{"inputs":[],"type":"constructor"},{"anonymous":false,"inputs":[{"indexed":false,"name":"timestamp","type":"uint256"},{"indexed":false,"name":"code","type":"string"}],"name":"chainyShortLink","type":"event"}]</textarea>
+			</p><p>		
 			<input checked="checked" type="radio" name="ethers" onclick="handleClicketh(this);" value="etherscan" />
 			To get transactions from etherscan cache; you can enter your api key: <i>you can get one free, <a href="https://etherscan.io/apis">etherscan api key</i></a>
-			<br><input type="text" value="YourApiKeyToken" id="etherscan" size="45" name="etherscan">
+			<br><input type="text" class="long" value="YourApiKeyToken" id="etherscan" size="45" name="etherscan">
 			<br>
 			<input type="radio" name="ethers" onclick="handleClicketh(this);" value="manual" />
 			Else you can search manually on the blockchain, with your node, but this is very slow. 
-			<br>Search From Block: <input type="text" id="fromb" value="3072900" size="10" name="fromb"> To Block: <input type="text" id="tob" size="10" name="tob"> 
+			<br>Search From Block: <input type="text" id="fromb" value="5072900" size="10" name="fromb"> To Block: <input type="text" id="tob" size="10" name="tob"> 
 			<br>
 			<br>
 			http links <input type="checkbox" id="httplink" checked> magnet links <input type="checkbox" id="magnetlink" checked> ipfs links <input type="checkbox" id="ipfslink"  checked>
 			<br>
-			<br>
+			</p>
 			<input type="submit" value="Search">
 		</form>
 			<br>
@@ -185,7 +207,7 @@
 		</table>
 	<br><br>
 	<div class="presentation" >
-		How to upload data:<br>
+		How to upload links to this uncensorable blockchain:<br>
 		This is an example of the JSON format that we are reading on inputs:<br>
 		<input type="text" name="txt" value="Your name file" onkeyup="settext(this.value)">&nbsp;&nbsp;<input type="text" name="txt2" value="magnet:?xt=urn..." onkeyup="settext2(this.value)">
 		<br><i>
@@ -203,8 +225,8 @@
 		<input size="5" type="text" name="gastx"  id="gastx" value="21000" onkeyup="settext3()">&nbsp; + &nbsp;<input size="5" type="text" name="txz" id="txz" value="64" onkeyup="settext3()"> * bytelength = <div style="display: contents;"  id="calculatorlol"></div>
 		<br><br>
 		To publish it on ethereum blockchain with <i>addChainyData function</i> you can follow <a href="https://chainy.info/howto">this steps</a>. Remember that ethereum is traceable, you must not upload ilegal links to the blockchain.
-		<br><br>
-		You can donate to pay the ethereum fees and thus we will be able to save more links and improve the software: 
+		
+		<br><p>You can donate to help pay the ethereum fees and thus we will be able to store more links and improve the software: 
 		<br>ETH: 0x904acEB95f681665768f1464f36903068730Fd42
 		<br><br>
 		<a href="https://itty.bitty.site/#/data:text/html;charset=utf-8;bxze64,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">
@@ -214,7 +236,7 @@
 		<a href="https://github.com/tyleryes/linksethereum.com/">
 		Fork me on Github 
 		</a>
-		
+		</p>
 	</div>
 	<script type="text/javascript">
 		var currentValue = "account";
